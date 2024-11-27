@@ -25,12 +25,12 @@ def main():
     print("Data ingestion ended.")
 
     # data consolidation
-    # print("Consolidation data started.")
-    # create_consolidate_tables()
-    # consolidate_city_data()
-    # consolidate_station_data()
-    # consolidate_station_statement_data()
-    # print("Consolidation data ended.")
+    print("Consolidation data started.")
+    create_consolidate_tables()
+    consolidate_city_data()
+    consolidate_station_data()
+    consolidate_station_statement_data()
+    print("Consolidation data ended.")
 
     # data agregation
     # print("Agregate data started.")

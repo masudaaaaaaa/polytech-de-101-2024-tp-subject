@@ -6,6 +6,7 @@ import pandas as pd
 
 today_date = datetime.now().strftime("%Y-%m-%d")
 PARIS_CITY_CODE = 1
+NANTES_CITY_CODE = 2
 
 def create_consolidate_tables():
     con = duckdb.connect(database = "data/duckdb/mobility_analysis.duckdb", read_only = False)
@@ -53,6 +54,39 @@ def consolidate_station_data():
         "code_insee_commune": "city_code"
     }, inplace=True)
 
+
+    
+    # Consolidation logic for Nantes Bicycle data
+    with open(f"data/raw_data/{today_date}/nantes_realtime_bicycle_data.json") as fd:
+        data = json.load(fd)
+    
+    nantes_raw_data_df = pd.json_normalize(data)
+    nantes_raw_data_df["id"] = nantes_raw_data_df["number"].apply(lambda x: f"{NANTES_CITY_CODE}-{x}")
+    nantes_raw_data_df["address"] = None
+    nantes_raw_data_df["created_date"] = date.today()
+
+    nantes_station_data_df = nantes_raw_data_df[[
+        "id",
+        "number",
+        "name",
+        "address",
+        "position.lon",
+        "position.lat",
+        "is_installed",
+        "created_date",
+        "bike_stands",
+        "status"
+    ]]
+
+    nantes_station_data_df.rename(columns={
+        "number": "code",
+        "coordonnees_geo.lon": "longitude",
+        "coordonnees_geo.lat": "latitude",
+        "bike_stands": "capacity"
+    }, inplace=True)
+
+
+    con.execute("INSERT OR REPLACE INTO CONSOLIDATE_STATION SELECT * FROM nantes_station_data_df;")
     con.execute("INSERT OR REPLACE INTO CONSOLIDATE_STATION SELECT * FROM paris_station_data_df;")
 
 
