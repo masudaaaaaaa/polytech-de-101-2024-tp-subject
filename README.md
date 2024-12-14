@@ -66,6 +66,8 @@ def consolidate_station_statement_data(city_name, city_code, selected_columns, r
 
 ## Exécution du projet
 
+**Installation**
+
 ```bash
 git clone https://github.com/masudaaaaaaa/polytech-de-101-2024-tp-subject
 
@@ -76,6 +78,35 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 pip install -r requirements.txt
+```
 
+**Exécution du pipeline**
+
+```bash
 python src/main.py
+```
+**Connexion à duckdb et requêtes de test**
+
+```bash
+./duckdb ./data/duckdb/mobility_analysis.duckdb 
+```
+
+```sql
+SELECT dm.NAME, tmp.SUM_BICYCLE_DOCKS_AVAILABLE
+FROM DIM_CITY dm INNER JOIN (
+    SELECT CITY_ID, SUM(BICYCLE_DOCKS_AVAILABLE) AS SUM_BICYCLE_DOCKS_AVAILABLE
+    FROM FACT_STATION_STATEMENT
+    WHERE CREATED_DATE = (SELECT MAX(CREATED_DATE) FROM CONSOLIDATE_STATION)
+    GROUP BY CITY_ID
+) tmp ON dm.ID = tmp.CITY_ID
+WHERE lower(dm.NAME) in ('paris', 'nantes', 'vincennes', 'toulouse');
+```
+
+```sql
+SELECT ds.name, ds.code, ds.address, tmp.avg_dock_available
+FROM DIM_STATION ds JOIN (
+    SELECT station_id, AVG(BICYCLE_AVAILABLE) AS avg_dock_available
+    FROM FACT_STATION_STATEMENT
+    GROUP BY station_id
+) AS tmp ON ds.id = tmp.station_id;
 ```
