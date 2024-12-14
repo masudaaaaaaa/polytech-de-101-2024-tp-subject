@@ -1,6 +1,5 @@
 import duckdb
 
-
 def create_agregate_tables():
     con = duckdb.connect(database = "data/duckdb/mobility_analysis.duckdb", read_only = False)
     with open("data/sql_statements/create_agregate_tables.sql") as fd:
