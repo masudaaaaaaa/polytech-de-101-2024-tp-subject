@@ -1,5 +1,7 @@
 # Travaux pratiques "Introduction à la data ingénierie"
 
+Simon Huaumé
+
 ## Sujet
 
 Ce projet a pour objectif de créer un pipeline ETL pour l’ingestion, la transformation et le stockage de données en temps réel issues des bornes de vélos dans plusieurs grandes villes de France (Paris, Nantes, et Toulouse).
